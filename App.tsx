@@ -1,118 +1,88 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, {useState} from 'react';
+import { StyleSheet, TouchableOpacity } from "react-native";
+import CustomTextInput, { dismissKeyboard } from "./src/components/NumberInput";
+import { KeyboardProvider } from 'react-native-keyboard-controller'
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+const App = () => {
+  const [text, setText] = useState<string>('');
+  const [text2, setText2] = useState<string>('');
+  const [active, setActive] = useState<number | null>(null);
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
-function App(): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
+  const renderInputWithDecimals = () => (
+    <TouchableOpacity
+      activeOpacity={1}
+      style={[styles.inputContainer, active === 1 ? { borderColor: '#FF990A' } : {}]}
+    >
+      <CustomTextInput
+        style={styles.input}
+        placeholder="Allow decimals..."
+        text={text}
+        config={{preventDecimal: false, maxDecimal: 5}}
+        onChange={newText => {
+          console.log("change 1: " + newText.nativeEvent.text)
+          setText(newText.nativeEvent.text)
+        }}
+        fontSize={12}
+        onFocus={() => setActive(1)}
+        onBlur={() => setActive(null)}
       />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    </TouchableOpacity>
+  )
+
+  const renderInputWithoutDecimals = () => (
+    <TouchableOpacity
+      activeOpacity={1}
+      style={[styles.inputContainer, active === 2 ? { borderColor: '#FF990A' } : {}]}
+    >
+      <CustomTextInput
+        style={styles.input}
+        placeholder="Disable decmials..."
+        text={text2}
+        textColor={'orange'}
+        config={{preventDecimal: true, maxInteger: 15}}
+        onChange={newText => {
+          console.log("change 2: " + newText.nativeEvent.text)
+          setText2(newText.nativeEvent.text)
+        }}
+        onFocus={() => setActive(2)}
+        onBlur={() => setActive(null)}
+      />
+    </TouchableOpacity>
+  )
+
+  return (
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={dismissKeyboard}
+        style={styles.container}
+      >
+          {renderInputWithDecimals()}
+          {renderInputWithoutDecimals()}
+      </TouchableOpacity>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 10,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  inputContainer: {
+    width: 200,
+    height: 44,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    paddingVertical: 2,
+    paddingHorizontal: 8,
+    borderRadius: 8,
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+  input: {
+    flex: 1,
+    height: 38,
   },
 });
 
 export default App;
+
